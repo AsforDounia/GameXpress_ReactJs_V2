@@ -1,59 +1,42 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useEffect, useState } from 'react';
 
 const Sidebar = () => {
+  const { user } = useAuth();
+  const roles = user?.roles?.map(role => role.name);
+  const location = useLocation();
+
+  const isSuperAdmin = roles?.includes('super_admin');
+
+  if (!isSuperAdmin) return null;
+
+  const links = [
+    { to: '/dashboard', label: 'Dashboard' },
+    { to: '/products', label: 'Products' },
+    { to: '/categories', label: 'Categories' },
+    // { to: '/subcategories', label: 'Subcategories' },
+    // { to: '/users', label: 'Users' },
+    // { to: '/roles', label: 'Roles' },
+    // { to: '/permissions', label: 'Permissions' }, // Optional if you have a frontend route for updateRolePermitions
+  ];
+
   return (
-    <div className="w-64 bg-gray-800 text-white p-5 min-h-screen fixed pt-28">
-      {/* <h2 className="text-2xl font-bold text-center text-white mb-10">Admin Dashboard</h2> */}
-      <ul>
-        <li>
-          <NavLink to="/dashboard" className="block py-2 px-4 hover:bg-gray-700 rounded"
-          activeClassName="bg-gray-700" >
-            Tableau de bord
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/products"
-            className="block py-2 px-4 hover:bg-gray-700 rounded"
-            activeClassName="bg-gray-700" >
-            Produits
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/commandes"
-            className="block py-2 px-4 hover:bg-gray-700 rounded"
-            activeClassName="bg-gray-700" >
-            Categories
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/clients"
-            className="block py-2 px-4 hover:bg-gray-700 rounded"
-            activeClassName="bg-gray-700" >
-            Clients
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/rapports"
-            className="block py-2 px-4 hover:bg-gray-700 rounded"
-            activeClassName="bg-gray-700" >
-            Rapports
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/parametres"
-            className="block py-2 px-4 hover:bg-gray-700 rounded"
-            activeClassName="bg-gray-700">
-            Paramètres
-          </NavLink>
-        </li>
-      </ul>
-    </div>
+    <aside className={`bg-blue-950 text-white fixed top-15 w-72 min-h-full pl-22 p-4 z-40 `}>
+      <nav className="flex flex-col space-y-4 py-8">
+        {links.map(link => (
+          <Link
+            key={link.to}
+            to={link.to}
+            className={`hover:underline ${
+              location.pathname.startsWith(link.to) ? 'font-semibold text-amber-400' : ''
+            }`}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
+    </aside>
   );
 };
 

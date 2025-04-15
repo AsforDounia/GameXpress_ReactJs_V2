@@ -9,7 +9,7 @@ import { IoMdReturnLeft } from "react-icons/io";
 import { toast } from "react-toastify";
 
 
-export default function CreateProduct() {
+export default function AddProduct() {
     const navigate = useNavigate();
     const { createProduct } = useProducts();
     const { subCategories, fetchSubcategories } = useSubCategory();
@@ -230,9 +230,3 @@ export default function CreateProduct() {
         </div>
     );
 }
-
-
-
-
-
-

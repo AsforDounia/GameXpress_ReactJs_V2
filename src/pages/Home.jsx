@@ -1,64 +1,38 @@
-import { Typography, Container, Box, Button } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const { isAuthenticated, user } = useAuth();
-  // console.log(user);
-  return (
-    <Container maxWidth="lg">
-          <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
 
-      <Box
-        sx={{
-          my: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          minHeight: '60vh',
-        }}
-      >
-        {/* <Typography variant="h3" component="h2" gutterBottom>
+  return (
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="flex flex-col justify-center items-center text-center min-h-[60vh] my-16">
+        <h2 className="text-4xl font-bold mb-4">
           Welcome to Our E-Commerce Store Game Express
-        </Typography> */}
-        <Typography variant="h5" component="h2" gutterBottom>
-          {isAuthenticated}
-              {/* ? `Hello, ${user.name}!`
-            : 'Please login or register to continue' */}
-            return <Navigate to="/products" replace />;
-        </Typography>
+        </h2>
+        <h3 className="text-2xl text-gray-700 mb-6">
+          {isAuthenticated
+            ? `Hello, ${user.name}!`
+            : 'Please login or register to continue'}
+        </h3>
         {!isAuthenticated && (
-        <>
-        <Typography variant="h3" component="h2" gutterBottom>
-          Welcome to Our E-Commerce Store Game Express
-        </Typography>
-          <Box sx={{ mt: 3 }}>
-            <Button
-              variant="contained"
-              size="large"
-              component={Link}
+          <div className="mt-4 space-x-4">
+            <Link
               to="/login"
-              sx={{ mr: 2 }}
+              className="bg-blue-900 hover:bg-blue-950 text-white font-medium py-2 px-6 rounded"
             >
               Login
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              component={Link}
+            </Link>
+            <Link
               to="/register"
+              className="border border-blue-900 text-blue-900 hover:bg-blue-50 font-medium py-2 px-6 rounded"
             >
               Register
-            </Button>
-          </Box>
-          </>
+            </Link>
+          </div>
         )}
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 

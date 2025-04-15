@@ -1,119 +1,123 @@
-import { useDashboard } from '../context/DashboardContext';
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import Sidebar from '../components/sidebar';
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import {
+  FiShoppingCart,
+  FiUsers,
+  FiBarChart2,
+  FiActivity,
+} from "react-icons/fi";
+import { BiCategory } from "react-icons/bi";
+import { MdOutlineCategory } from "react-icons/md";
+import { useDashboard } from "../context/DashboardContext";
 
 const Dashboard = () => {
+  const { dashboardData, fetchDashboardData } = useDashboard();
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { data } = useDashboard();
-
-  console.log(data);
 
   useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      await fetchDashboardData();
+      setLoading(false); // Set loading to false after data is fetched
+    };
 
-    return () => clearTimeout(timer);
-  }, []);
+    fetchData();
+  }, [fetchDashboardData]);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin border-t-4 border-blue-500 border-solid w-12 h-12 rounded-full"></div>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin" />
       </div>
     );
   }
 
+  if (!dashboardData) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <p className="text-gray-500">No dashboard data available.</p>
+      </div>
+    );
+  }
+
+  const cards = [
+    {
+      title: "Total Products",
+      icon: <FiShoppingCart className="text-blue-500 text-xl" />,
+      value: dashboardData.total_products || 0,
+    },
+    {
+      title: "Total Users",
+      icon: <FiUsers className="text-blue-500 text-xl" />,
+      value: dashboardData.total_users || 0,
+    },
+    {
+      title: "Total Categories",
+      icon: <BiCategory className="text-blue-500 text-xl" />,
+      value: dashboardData.total_categories || 0,
+    },
+    {
+      title: "Total SubCategories",
+      icon: <MdOutlineCategory className="text-blue-500 text-xl" />,
+      value: dashboardData.total_subcategories || 0,
+    },
+  ];
+
   return (
-    <>
-      {data && (
+    <div className="max-w-6xl mx-auto px-4 mt-10 mb-10">
+      <h1 className="text-3xl font-semibold mb-2">Dashboard</h1>
+      <p className="text-gray-600 mb-8">Welcome back, {user.name}</p>
 
-        <div className="">
-          {/* <Sidebar /> */}
-          <div className="container mx-auto mt-4 mb-4">
-            <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-            <p className="text-lg text-gray-600 mb-4">
-              Welcome back, {user.name} ({user.roles[0].name})
-            </p>
-
-            <div className="grid grid-cols-4  gap-4 mt-2">
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-gray-500">Total Products</p>
-                  <div className="text-blue-500">🛒</div>
-                </div>
-                <p className="text-xl font-semibold">{data.total_products}</p>
-              </div>
-
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-gray-500">Total Users</p>
-                  <div className="text-blue-500">👥</div>
-                </div>
-                <p className="text-xl font-semibold">{data.total_users}</p>
-              </div>
-
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-gray-500">Total Categories</p>
-                  <div className="text-blue-500">📊</div>
-                </div>
-                <p className="text-xl font-semibold">{data.total_categories}</p>
-              </div>
-
-              <div className="bg-white p-4 shadow-md rounded-lg">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-gray-500">Total Sub_Categories</p>
-                  <div className="text-blue-500">📈</div>
-                </div>
-                <p className="text-xl font-semibold">{data.total_subcategories}</p>
-              </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {cards.map((card, idx) => (
+          <div key={idx} className="bg-white shadow rounded-lg p-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-500">{card.title}</span>
+              {card.icon}
             </div>
-
-            <div className="mt-10 bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Products with Low Stock</h2>
-              <div className="overflow-x-auto">
-                <table className="min-w-full table-auto border-collapse">
-                  <thead>
-                    <tr className="bg-gray-100 text-left">
-                      <th className="px-4 py-2 text-sm font-semibold text-gray-600 border-b">
-                        Product Name
-                      </th>
-                      <th className="px-4 py-2 text-sm font-semibold text-gray-600 border-b">
-                        Quantity
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.low_stock_products.map((product, idx) => (
-                      <tr
-                        key={idx}
-                        className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                      >
-                        <td className="px-4 py-2 border-b text-sm text-gray-700">
-                          {product.name}
-                        </td>
-                        <td className="px-4 py-2 border-b text-sm text-gray-700">
-                          {product.stock}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {data.low_stock_products.length === 0 && (
-                  <p className="text-sm text-gray-500 mt-4">
-                    No low-stock products found.
-                  </p>
-                )}
-              </div>
-            </div>
+            <h2 className="text-2xl font-bold">{card.value}</h2>
           </div>
+        ))}
+      </div>
+
+      <div className="mt-10 bg-white shadow rounded-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Products with Low Stock</h2>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="px-4 py-2 text-sm font-semibold text-gray-600 border-b">
+                  Product Name
+                </th>
+                <th className="px-4 py-2 text-sm font-semibold text-gray-600 border-b">
+                  Quantity
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {dashboardData.low_stock_products.map((product, idx) => (
+                <tr
+                  key={idx}
+                  className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                >
+                  <td className="px-4 py-2 border-b text-sm text-gray-700">
+                    {product.name}
+                  </td>
+                  <td className="px-4 py-2 border-b text-sm text-gray-700">
+                    {product.stock}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {dashboardData.low_stock_products.length === 0 && (
+            <p className="text-sm text-gray-500 mt-4">
+              No low-stock products found.
+            </p>
+          )}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 

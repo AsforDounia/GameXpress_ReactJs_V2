@@ -1,16 +1,14 @@
-// src/components/ProtectedRoute.jsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { CircularProgress, Box } from '@mui/material';
 
-const ProtectedRoute = ({ roles  }) => {
-  const { user, isAuthenticated, loading, hasRole, hasPermission } = useAuth();
+const ProtectedRoute = ({ roles }) => {
+  const { user, isAuthenticated, loading, hasRole } = useAuth();
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-        <CircularProgress />
-      </Box>
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <div className="w-10 h-10 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+      </div>
     );
   }
 
@@ -20,17 +18,13 @@ const ProtectedRoute = ({ roles  }) => {
 
   // Check roles
   if (roles) {
-    // console.log(roles)
     const hasRequiredRoles = hasRole(roles);
-      
-    
     if (!hasRequiredRoles) {
       return <Navigate to="/unauthorized" replace />;
     }
   }
 
- 
-  return <Outlet /> ;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

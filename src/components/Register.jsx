@@ -1,30 +1,21 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { PiGameControllerFill } from "react-icons/pi";
-
 import { Link } from 'react-router-dom';
 
-const Register = () => {
-  const [userData, setUserData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-  });
-  const [error, setError] = useState('');
+function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { register } = useAuth();
-  const navigate = useNavigate();
+  
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm();
 
-  const handleChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const password = watch('password', '');
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -34,22 +25,8 @@ const Register = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    // Check if passwords match before proceeding
-    if (userData.password !== userData.password_confirmation) {
-      setError('Les mots de passe ne correspondent pas');
-      return;
-    }
-    
-    const result = await register(userData);
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.message);
-    }
+  const onSubmit = (data) => {
+    console.log("Registration data:", data);
   };
 
   return (
@@ -59,7 +36,6 @@ const Register = () => {
           {/* Left Side - Image Section */}
           <div className="w-1/2 bg-blue-950 relative flex flex-col justify-center items-center p-8">
             <div className="text-center relative z-10">
-              {/* You need to import PiGameControllerFill */}
               <PiGameControllerFill className="text-6xl text-amber-50 mx-auto mb-4" />
               <h1 className="text-4xl font-bold text-amber-50">
                 Game<span className="text-white">Express</span>
@@ -74,7 +50,7 @@ const Register = () => {
               <p className="text-darkTeal">Créez votre compte GameExpress</p>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               {/* Name Input */}
               <div className="mb-4">
                 <label htmlFor="name" className="block text-left text-blue-950 font-medium mb-2">
@@ -85,14 +61,20 @@ const Register = () => {
                   <input
                     type="text"
                     id="name"
-                    name="name"
-                    value={userData.name}
-                    onChange={handleChange}
+                    {...register('name', {
+                      required: 'Le nom est requis',
+                      minLength: {
+                        value: 2,
+                        message: 'Le nom doit contenir au moins 2 caractères'
+                      }
+                    })}
                     placeholder="Votre nom complet"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal"
-                    required
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                )}
               </div>
 
               {/* Email Input */}
@@ -105,14 +87,20 @@ const Register = () => {
                   <input
                     type="email"
                     id="email"
-                    name="email"
-                    value={userData.email}
-                    onChange={handleChange}
+                    {...register('email', {
+                      required: 'Email est requis',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Format d'email invalide"
+                      }
+                    })}
                     placeholder="votre@email.com"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal"
-                    required
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                )}
               </div>
 
               {/* Password Input */}
@@ -125,12 +113,15 @@ const Register = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="password"
-                    name="password"
-                    value={userData.password}
-                    onChange={handleChange}
+                    {...register('password', {
+                      required: 'Mot de passe est requis',
+                      minLength: {
+                        value: 6,
+                        message: 'Le mot de passe doit contenir au moins 6 caractères'
+                      }
+                    })}
                     placeholder="••••••••"
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal"
-                    required
                   />
                   <button
                     type="button"
@@ -140,6 +131,9 @@ const Register = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                )}
               </div>
 
               {/* Confirm Password Input */}
@@ -152,12 +146,13 @@ const Register = () => {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     id="password_confirmation"
-                    name="password_confirmation"
-                    value={userData.password_confirmation}
-                    onChange={handleChange}
+                    {...register('password_confirmation', {
+                      required: 'Confirmation du mot de passe requise',
+                      validate: value => 
+                        value === password || 'Les mots de passe ne correspondent pas'
+                    })}
                     placeholder="••••••••"
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-teal"
-                    required
                   />
                   <button
                     type="button"
@@ -167,6 +162,29 @@ const Register = () => {
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+                )}
+              </div>
+
+              {/* Terms and Conditions */}
+              <div className="mb-4">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    {...register('terms', {
+                      required: "Vous devez accepter les conditions d'utilisation"
+                    })}
+                    className="mr-2 accent-blue-900 rounded-sm"
+                  />
+                  <label htmlFor="terms" className="text-sm">
+                    J'accepte les <a href="/terms" className="text-blue-900 hover:underline">conditions d'utilisation</a>
+                  </label>
+                </div>
+                {errors.terms && (
+                  <p className="text-red-500 text-sm mt-1">{errors.terms.message}</p>
+                )}
               </div>
 
               {/* Submit Button */}
@@ -188,10 +206,10 @@ const Register = () => {
             {/* Footer */}
             <div className="text-center">
               <p>
-                Vous avez déjà un compte ?{' '}
+                Vous avez déjà un compte ? {' '}
                 <Link to="/login" className="text-blue-900 hover:underline">
-                  Connectez-vous
-                </Link>
+                Inscrivez-vous
+            </Link>
               </p>
             </div>
           </div>
@@ -199,6 +217,6 @@ const Register = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Register;

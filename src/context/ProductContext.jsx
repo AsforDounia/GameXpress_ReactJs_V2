@@ -1,123 +1,108 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import api from '../api/axios'
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import api, { apiV1 } from '../api/axios';
 
 const ProductContext = createContext();
 
+
 export const ProductProvider = ({ children }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [productDetails, setProductDetails] = useState();
+    const [products, setProducts] = useState([]);
+    const [productDetails, setProductDetails] = useState();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  const fetchProducts = async () => {
-    try {
-      const response = await api.get('v1/admin/products');
-      setProducts(response.data.products);
+    // Fetch products
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+            const response = await apiV1.get('products');
+            setProducts(response.data.products);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to fetch products');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      return { success: true };
-    } catch (error) {
-      console.error('error fetch products', error);
-
-      return {
-        success: false,
-        message: error.response?.data?.message || 'error fetch products'
+    const showProduct = async (id) => {
+        setLoading(true);
+        try {
+          const response = await apiV1.get(`products/${id}`);
+          setProductDetails(response.data.product);
+        } catch (err) {
+          setError(err.response?.data?.message || 'Failed to fetch product details');
+        } finally {
+          setLoading(false);
+        }
       };
-    } finally {
-      setLoading(false);
-    }
-  }
 
-  const showProduct = async (id) => {
-    try {
-      const response = await api.get(`v1/admin/products/${id}`);
-      setProductDetails(response.data.product);
-      // console.log('products show ', response.data.product);
-      return {
-        success: true,
-        product: response.data.product
-      };
-    } catch (error) {
-      console.error('error show product details', error);
+    // Create product
+    const createProduct = async (formData) => {
+        setLoading(true);
+        try {
+            const response = await apiV1.post('products', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            
+            setProducts(prev => [...prev, response.data.product]);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to create product');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      return {
-        success: false,
-        message: error.response?.data?.message || 'error show product'
-      };
-    } finally {
-      setLoading(false);
-    }
-  }
+    // Update product
+    const updateProduct = async (id, formData) => {
+        setLoading(true);
+        try {
+            const response = await apiV1.post(`products/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'X-HTTP-Method-Override': 'PUT'
+                }
+            });
+            setProducts(prev =>
+                prev.map(p => (p.id === id ? response.data.product : p))
+            );
+            
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to update product');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const createProduct = async (productData) => {
-    try {
-      console.log(productData);
-      const response = await api.post('v1/admin/products', productData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+    // Delete product
+    const deleteProduct = async (id) => {
+        setLoading(true);
+        try {
+            await apiV1.delete(`products/${id}`);
+            setProducts(prev => prev.filter(p => p.id !== id));
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to delete product');
+        } finally {
+            setLoading(false);
 
-      return {
-        success: true,
-        product: response.data.product,
-        message: 'Produit créé avec succès !'
-      };
-    } catch (error) {
-      console.error('Erreur lors de la création du produit', error);
-
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Erreur lors de la création du produit'
-      };
-    }
-  };
+        }
+    };
 
 
-  const updateProduct = async (id, productData) => {
-    setLoading(true);
-    try {
-      console.log(productData);
-      const response = await api.post(`v1/admin/products/${id}`, productData,
-        { headers: { 
-          'Content-Type': 'multipart/form-data',
-          'X-HTTP-Method-Override': 'PUT'} 
-        });
 
-        setProducts(prev =>
-          prev.map(p => (p.id === id ? response.data.product : p))
-      );
-
-      return {
-        success: true,
-        product: response.data.product,
-        message: 'Produit créé avec succès !'
-      };
-    } catch (error) {
-      console.error('Erreur lors de la création du produit', error);
-
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Erreur lors de la création du produit'
-      };
-    }
-  }
-
-  const deleteProduct = async (id) => {
-    setLoading(true);
-    try{
-      const response = await api.delete(`v1/admin/products/${id}`);
-      setProducts(oldProduct => oldProduct.filter(p => p.id != id));
-    } catch (error) {
-      console.error('Erreur lors de la création du produit', error);
-
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Erreur lors de la création du produit'
-      };
-    }
-  }
-  return (
-    <ProductContext.Provider value={{ products, loading, fetchProducts, showProduct, productDetails, createProduct, updateProduct , deleteProduct}}>
-      {children}
-    </ProductContext.Provider>
-  );
-}
+    return (
+        <ProductContext.Provider value={{
+            products,
+            loading,
+            error,
+            fetchProducts,
+            showProduct,
+            productDetails,
+            createProduct,
+            updateProduct,
+            deleteProduct,
+        }}>
+            {children}
+        </ProductContext.Provider>
+    );
+};
 export const useProducts = () => useContext(ProductContext);
-
