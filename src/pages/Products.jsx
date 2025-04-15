@@ -1,7 +1,7 @@
 import React, { use, useEffect } from 'react';
 import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Products() {
   const navigate = useNavigate();
@@ -19,13 +19,18 @@ function Products() {
 
   return (
     <div className="px-6 py-8">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800">Product List</h2>
+      <div className='flex justify-between items-center mb-8'>
+        <h2 className="text-3xl font-bold text-gray-800">Product List</h2>
+        <Link to='/AddProduct' className='bg-blue-500 px-4 py-2 rounded-md text-white cursor-pointer'>
+          Add Product
+        </Link>
+      </div>
 
       <div className="grid lg:grid-cols-4  md:grid-cols-2 sm:grid-cols-1 gap-8 ">
         {products.map(product => (
           <div key={product.id}
-            className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-5 text-center cursor-pointer" 
-            onClick={ () => handleProduct(product.id)}>
+            className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-5 text-center cursor-pointer"
+            onClick={() => handleProduct(product.id)}>
 
             <img
               // src={`http://127.0.0.1:8000/storage/product_images/${product.product_images[0]}`}

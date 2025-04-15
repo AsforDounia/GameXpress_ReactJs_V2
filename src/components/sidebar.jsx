@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <div className="w-64 bg-gray-800 text-white p-5">
-      <h2 className="text-2xl font-bold text-center text-white mb-10">Admin Dashboard</h2>
+    <div className="w-64 bg-gray-800 text-white p-5 min-h-screen fixed pt-28">
+      {/* <h2 className="text-2xl font-bold text-center text-white mb-10">Admin Dashboard</h2> */}
       <ul>
         <li>
-          <NavLink to="/" className="block py-2 px-4 hover:bg-gray-700 rounded"
+          <NavLink to="/dashboard" className="block py-2 px-4 hover:bg-gray-700 rounded"
           activeClassName="bg-gray-700" >
             Tableau de bord
           </NavLink>
@@ -25,7 +25,7 @@ const Sidebar = () => {
             to="/commandes"
             className="block py-2 px-4 hover:bg-gray-700 rounded"
             activeClassName="bg-gray-700" >
-            Commandes
+            Categories
           </NavLink>
         </li>
         <li>
