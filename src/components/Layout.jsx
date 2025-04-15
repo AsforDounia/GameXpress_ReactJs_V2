@@ -1,45 +1,61 @@
 import { Outlet, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import Sidebar from './sidebar';
 
 const Layout = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  // console.log(user);
   const roles = user?.roles?.map(role => role.name);
+  const isAdmin = roles?.includes('super_admin') || roles?.includes('product_manager');
+
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            E-Commerce
-          </Typography>
-          {isAuthenticated ? (
-            <>
-              {(roles?.includes('super_admin') || roles?.includes('product_manager')) && (
-                <Button color="inherit" component={Link} to="/dashboard">
-                  Dashboard
-                </Button>
-              )}
-              <Button color="inherit" onClick={logout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button color="inherit" component={Link} to="/login">
-                Login
-              </Button>
-              <Button color="inherit" component={Link} to="/register">
-                Register
-              </Button>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Outlet />
-        
-      </Container>
+      {/* Header / Navbar */}
+      <header className="bg-gray-800 text-white shadow-lg fixed w-full z-20">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold capitalize">{(!roles || roles == "client") ? "GameXpress" : "Dashboard " + roles} </h1>
+          <nav className="flex space-x-4">
+            {isAuthenticated ? (
+              <>
+                {/* {(roles?.includes('super_admin') || roles?.includes('product_manager')) && (
+                  <Link to="/dashboard" className="hover:bg-blue-700 px-3 py-2 rounded">
+                    Dashboard
+                  </Link>
+                )} */}
+                <button
+                  onClick={logout}
+                  className="hover:bg-blue-700 px-3 py-2 rounded"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="hover:bg-blue-700 px-3 py-2 rounded">
+                  Login
+                </Link>
+                <Link to="/register" className="hover:bg-blue-700 px-3 py-2 rounded">
+                  Register
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {/* Sidebar */}
+      {isAdmin ? (
+        <>
+          <Sidebar />
+          <main className="absolute top-1/14 left-1/5 w-2/3 px-4 py-6">
+            <Outlet />
+          </main>
+        </>
+      ) : (
+        <main className="px-4 py-6">
+          <Outlet />
+        </main>
+      )}
+
     </>
   );
 };

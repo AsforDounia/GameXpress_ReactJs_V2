@@ -12,6 +12,10 @@ import { DashboardProvider } from './context/DashboardContext';
 import { ProductProvider } from './context/ProductContext';
 import Products from './pages/Products';
 import ProductDetail from './pages/productDetails';
+import CreateProduct from './pages/createProduct';
+import { CategoryProvider } from './context/CategoryContext';
+import { SubCategoryProvider } from './context/SubCategoryContext';
+import EditProduct from './pages/EditProduct';
 
 
 function App() {
@@ -19,6 +23,8 @@ function App() {
     <Router>
       <AuthProvider>
         <ProductProvider>
+          <CategoryProvider>
+          <SubCategoryProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
@@ -38,11 +44,8 @@ function App() {
               <Route path="unauthorized" element={<Unauthorized />} />
 
               {/* Protected routes */}
-              <Route
-                element={
-                  <ProtectedRoute roles={["product_manager", "super_admin"]} />
-                }
-              >
+              <Route element={<ProtectedRoute roles={["product_manager", "super_admin"]} />}>
+
                 <Route
                   path="dashboard"
                   element={
@@ -51,6 +54,9 @@ function App() {
                     </DashboardProvider>
                   }
                 />
+                <Route path="AddProduct" element={<CreateProduct />} />
+                <Route path="UpdateProduct/:id" element={<EditProduct />} />
+
               </Route>
 
               <Route element={<ProtectedRoute roles={['super_admin']} />}>
@@ -63,6 +69,8 @@ function App() {
             </Route>
             <Route path="*" element={<div>404</div>} />
           </Routes>
+          </SubCategoryProvider>
+          </CategoryProvider>
         </ProductProvider>
       </AuthProvider>
     </Router>
