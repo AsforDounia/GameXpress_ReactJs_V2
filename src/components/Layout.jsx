@@ -1,46 +1,71 @@
-import { Outlet, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Sidebar from './SideBar';
 
 const Layout = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  // console.log(user);
+  const { isAuthenticated, user, logout } = useAuth();
   const roles = user?.roles?.map(role => role.name);
+  const location = useLocation();
+
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isProductsPage = location.pathname === '/products' || location.pathname === '/productdetails/:id';
+
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            E-Commerce
-          </Typography>
-          {isAuthenticated ? (
-            <>
-              {(roles?.includes('super_admin') || roles?.includes('product_manager')) && (
-                <Button color="inherit" component={Link} to="/dashboard">
-                  Dashboard
-                </Button>
+    <div className='bg-gray-50'>
+      {!isAuthPage && (
+        <header className="bg-blue-950 text-white fixed top-0 left-0 w-full z-10 shadow-md h-16 flex flex-col justify-center px-2 z-40">
+          <div className="container px-12 py-4 flex justify-between items-center">
+          <h1 className="text-xl font-semibold capitalize">{(!roles || roles == "client") ? "GameXpress" : "Dashboard " + roles} </h1>
+
+            <div className="flex items-center space-x-4">
+              {isAuthenticated ? (
+                <>
+                  {/* {(roles?.includes('super_admin') || roles?.includes('product_manager')) && (
+                    <Link to="/dashboard" className="hover:underline">
+                      Dashboard
+                    </Link>
+                  )} */}
+                  <Link to="/profile" className="hover:underline">
+                    Profile
+                  </Link>
+                  <button onClick={logout} className="hover:underline cursor-pointer">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                {!isProductsPage && (
+                  <Link to="/products" className="hover:underline">
+                    Products
+                  </Link>
+  
+                )
+                }
+                  <Link to="/login" className="hover:underline">
+                    Login
+                  </Link>
+                  <Link to="/register" className="hover:underline">
+                    Register
+                  </Link>
+                </>
               )}
-              <Button color="inherit" onClick={logout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button color="inherit" component={Link} to="/login">
-                Login
-              </Button>
-              <Button color="inherit" component={Link} to="/register">
-                Register
-              </Button>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+            </div>
+          </div>
+        </header>
+      )}
+    <div className="flex">
+      {/* Sidebar will only be shown if the user is roles super_admin */}
+      {isAuthenticated && roles?.includes('super_admin') && (
+        <div className="hidden md:block w-64 bg-gray-200 min-h-screen">
+          <Sidebar />
+        </div>
+      )}
+
+      <main className="container mx-auto px-4 mt-8 relative top-16 w-3/4">
         <Outlet />
-        
-      </Container>
-    </>
+      </main>
+      </div>
+    </div>
   );
 };
 

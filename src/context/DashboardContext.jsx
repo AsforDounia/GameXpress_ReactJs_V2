@@ -1,33 +1,32 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api/axios';
+import  { apiV1 } from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
-  const [data, setData] = useState(null);
+  const { token } = useAuth();
+  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const dashboardStatistique = async () => {
-    try {
-      const response = await api.get('v1/admin/dashboard');
-    //   console.log(response.data);
-      setData(response.data.data);
-      return { success: true };
-    } catch (error) {
-      console.error('error dashboard', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || 'error dashboard'
-      };
-    }
-  };
+  const fetchDashboardData = async () => {
+      if (!token) return;
 
-  useEffect(() => {
-    dashboardStatistique().finally(() => setLoading(false));
-  }, []);
+      try {
+        const response = await apiV1.get('dashboard');
+        setDashboardData(response.data.data);
+      } catch (err) {
+        console.error('Dashboard fetch error:', err);
+        setError('Failed to fetch dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
 
   return (
-    <DashboardContext.Provider value={{ data, loading }}>
+    <DashboardContext.Provider value={{ dashboardData , fetchDashboardData}}>
       {children}
     </DashboardContext.Provider>
   );

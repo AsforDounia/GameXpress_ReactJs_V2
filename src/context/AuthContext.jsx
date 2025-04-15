@@ -1,11 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api/axios';
-import { useNavigate } from 'react-router-dom';
+import api, { apiV1 } from '../api/axios';
+
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       try {
         if (token) {
           const { data } = await api.get('/user');
-          // console.log(data);
+
           setUser(data);
           setIsAuthenticated(true);
         }
@@ -37,20 +36,20 @@ export const AuthProvider = ({ children }) => {
    const hasRole = (requiredRoles) => {
      if (!requiredRoles || requiredRoles.length === 0) return true;
      if (!user?.roles) return false;
-     // return requiredRoles.some(role => user.roles.includes(role));
      const roles = user?.roles?.map(role => role.name);
-     return requiredRoles.some(role => roles.includes(role));
+    return requiredRoles.some(role => roles.includes(role));
   };
+
 
   const login = async (credentials) => {
     try {
-      const { data } = await api.post('v1/admin/login', credentials);
-      // console.log(data.data.token);
+      const { data } = await apiV1.post('login', credentials);
+      
       localStorage.setItem('token', data.data.token);
       setToken(data.data.token);
       setUser(data.data.user);
-      setIsAuthenticated(true);
-      return { success: true };
+      setIsAuthenticated(false);
+      return { success: true};
     } catch (error) {
       console.error('Login failed:', error);
       return { success: false, message: error.response?.data?.message || 'Login failed' };
@@ -59,13 +58,13 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (credentials) => {
     try {
-      const { data } = await api.post('v1/admin/register', credentials);
+      const { data } = await apiV1.post('register', credentials);
       console.log(data.token);
       localStorage.setItem('token', data.token);
       setToken(data.token);
       setUser(data.user);
       setIsAuthenticated(true);
-      return { success: true };
+      return { success: true};
     } catch (error) {
       console.error('Register failed:', error);
       return { success: false, message: error.response?.data?.message || 'Register failed' };
@@ -75,7 +74,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await api.post('/logout');
+      await apiV1.post('logout');
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
@@ -84,7 +83,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
       delete api.defaults.headers.common['Authorization'];
-      navigate("/");
     }
   };
 
