@@ -51,7 +51,7 @@ export const ProductProvider = ({ children }) => {
     try {
       console.log(productData);
       const response = await api.post('v1/admin/products', productData,
-        {headers : {'Content-Type': 'multipart/form-data'}}
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
       return {
@@ -70,16 +70,36 @@ export const ProductProvider = ({ children }) => {
   };
 
 
-  const updateProduct = async (id) => {
+  const updateProduct = async (id, productData) => {
+    setLoading(true);
     try {
-      const response = await api.post(`v1/admin/products/${id}`)
+      console.log(productData);
+      const response = await api.post(`v1/admin/products/${id}`, productData,
+        { headers: { 
+          'Content-Type': 'multipart/form-data',
+          'X-HTTP-Method-Override': 'PUT'} 
+        });
 
+        setProducts(prev =>
+          prev.map(p => (p.id === id ? response.data.product : p))
+      );
+
+      return {
+        success: true,
+        product: response.data.product,
+        message: 'Produit créé avec succès !'
+      };
     } catch (error) {
+      console.error('Erreur lors de la création du produit', error);
 
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Erreur lors de la création du produit'
+      };
     }
   }
   return (
-    <ProductContext.Provider value={{ products, loading, fetchProducts, showProduct, productDetails, createProduct}}>
+    <ProductContext.Provider value={{ products, loading, fetchProducts, showProduct, productDetails, createProduct, updateProduct}}>
       {children}
     </ProductContext.Provider>
   );

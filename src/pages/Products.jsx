@@ -14,20 +14,12 @@ function Products() {
   const handleProduct = (id) => {
     navigate(`/products/${id}`);
   }
+  const handleUpdate = (id) => {
+    navigate(`/UpdateProduct/${id}`);
+  }
   useEffect(() => {
     fetchProducts();
   }, []);
-  // useEffect(() => {
-  //   if (productDetails && productDetails.product_images) {
-  //     const primary = productDetails.product_images.find((image) => image.is_primary)?.image_url;
-  //     // const others = productDetails.product_images.filter((image) => !image.is_primary);
-  //     setPrimaryImage(primary);
-  //     // setOthersImages(others);
-  //     // console.log("othersImages", primaryImage);
-  //   }
-
-  // }, [productDetails])
-  // console.log(products);
 
   return (
     <div className="px-6 py-8">
@@ -43,7 +35,9 @@ function Products() {
 
           <div key={product.id}
             className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-5 text-center cursor-pointer"
-            onClick={() => handleProduct(product.id)}>
+            >
+              <div onClick={() => handleProduct(product.id)}>
+
             {product && product.product_images &&(
               <img
                 // src={`http://127.0.0.1:8000/storage/${product.product_images.find((image) => image.is_primary)?.image_url}`}
@@ -57,6 +51,7 @@ function Products() {
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
               {product.name}</h3>
             <p className="text-gray-600 mb-4">${product.price}</p>
+            </div>
 
             {isAuthenticated && (roles?.includes('super_admin') || roles?.includes('product_manager')) && (
               <div className="flex justify-center gap-3">

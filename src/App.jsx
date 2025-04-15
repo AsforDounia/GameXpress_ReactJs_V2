@@ -15,6 +15,7 @@ import ProductDetail from './pages/productDetails';
 import CreateProduct from './pages/createProduct';
 import { CategoryProvider } from './context/CategoryContext';
 import { SubCategoryProvider } from './context/SubCategoryContext';
+import EditProduct from './pages/EditProduct';
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
                   }
                 />
                 <Route path="AddProduct" element={<CreateProduct />} />
+                <Route path="UpdateProduct/:id" element={<EditProduct />} />
 
               </Route>
 
