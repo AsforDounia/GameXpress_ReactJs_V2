@@ -1,37 +1,21 @@
-// src/pages/Unauthorized.jsx
-import { Typography, Container, Box, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Unauthorized = () => {
   return (
-    <Container maxWidth="md">
-      <Box
-        sx={{
-          my: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          minHeight: '60vh',
-        }}
-      >
-        <Typography variant="h3" component="h1" gutterBottom>
-          403 - Unauthorized Access
-        </Typography>
-        <Typography variant="h5" component="h2" gutterBottom>
+    <div className="max-w-3xl mx-auto px-4">
+      <div className="flex flex-col justify-center items-center text-center min-h-[60vh] my-16">
+        <h1 className="text-4xl font-bold mb-4">403 - Unauthorized Access</h1>
+        <h2 className="text-2xl text-gray-700 mb-6">
           You don't have permission to access this page
-        </Typography>
-        <Button
-          variant="contained"
-          component={Link}
+        </h2>
+        <Link
           to="/"
-          sx={{ mt: 3 }}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition"
         >
           Go to Home
-        </Button>
-      </Box>
-    </Container>
+        </Link>
+      </div>
+    </div>
   );
 };
 

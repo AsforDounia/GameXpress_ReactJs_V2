@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import  api  from '../api/axios';
+import { apiV1 } from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 const CategoryContext = createContext();
@@ -15,7 +15,7 @@ export const CategoryProvider = ({ children }) => {
 
     const fetchCategories = async () => {
         try {
-          const response = await api.get("v1/admin/categories");
+          const response = await apiV1.get("categories");
           setCategories(response.data.categories);
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -26,7 +26,7 @@ export const CategoryProvider = ({ children }) => {
     const deleteCategory = async (id) => {
         setLoading(true);
         try {
-            const response = await api.delete(`v1/admin/categories/${id}`);
+            const response = await apiV1.delete(`categories/${id}`);
             setCategories(prev => prev.filter(category => category.id !== id));
             // navigate('/categories');
         } catch (err) {
@@ -40,7 +40,7 @@ export const CategoryProvider = ({ children }) => {
     const displayCategory = async (id) => {
         setLoading(true);
         try {
-            const response = await api.get(`v1/admin/categories/${id}`);
+            const response = await apiV1.get(`categories/${id}`);
             setCategoryDetails(response.data.category);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to fetch category details');
@@ -50,7 +50,7 @@ export const CategoryProvider = ({ children }) => {
     const editCategory = async (id , categoryData) => {
         setLoading(true);
         try {
-            const response = await api.put(`v1/admin/categories/${id}`, categoryData);
+            const response = await apiV1.put(`categories/${id}`, categoryData);
             setCategories(prev => prev.map(category => category.id === id ? response.data.category : category));
             // navigate('/categories');
         }
@@ -64,7 +64,7 @@ export const CategoryProvider = ({ children }) => {
     const addCategory = async (categoryData) => {
         setLoading(true);
         try {
-            const response = await api.post('v1/admin/categories', categoryData);
+            const response = await apiV1.post('categories', categoryData);
             setCategories(prev => [...prev, response.data.category]);
             // navigate('/categories');
         }
