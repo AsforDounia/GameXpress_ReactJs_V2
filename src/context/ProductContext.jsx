@@ -98,8 +98,23 @@ export const ProductProvider = ({ children }) => {
       };
     }
   }
+
+  const deleteProduct = async (id) => {
+    setLoading(true);
+    try{
+      const response = await api.delete(`v1/admin/products/${id}`);
+      setProducts(oldProduct => oldProduct.filter(p => p.id != id));
+    } catch (error) {
+      console.error('Erreur lors de la création du produit', error);
+
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Erreur lors de la création du produit'
+      };
+    }
+  }
   return (
-    <ProductContext.Provider value={{ products, loading, fetchProducts, showProduct, productDetails, createProduct, updateProduct}}>
+    <ProductContext.Provider value={{ products, loading, fetchProducts, showProduct, productDetails, createProduct, updateProduct , deleteProduct}}>
       {children}
     </ProductContext.Provider>
   );

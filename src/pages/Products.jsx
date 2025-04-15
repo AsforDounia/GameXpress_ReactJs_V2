@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 function Products() {
   const navigate = useNavigate();
-  const { products, loading, fetchProducts } = useProducts();
+  const { products, loading, fetchProducts ,deleteProduct} = useProducts();
   const { user, isAuthenticated } = useAuth();
   const [primaryImage, setPrimaryImage] = useState(null);
   // const [othersImages, setOthersImages] = useState([]);
@@ -16,6 +16,9 @@ function Products() {
   }
   const handleUpdate = (id) => {
     navigate(`/UpdateProduct/${id}`);
+  }
+  const handleDelete = (id) => {
+    deleteProduct(id);
   }
   useEffect(() => {
     fetchProducts();
