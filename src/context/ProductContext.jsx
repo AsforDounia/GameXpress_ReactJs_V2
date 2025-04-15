@@ -49,7 +49,10 @@ export const ProductProvider = ({ children }) => {
 
   const createProduct = async (productData) => {
     try {
-      const response = await api.post('v1/admin/products', productData);
+      console.log(productData);
+      const response = await api.post('v1/admin/products', productData,
+        {headers : {'Content-Type': 'multipart/form-data'}}
+      );
 
       return {
         success: true,

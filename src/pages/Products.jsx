@@ -1,4 +1,4 @@
-import React, { use, useEffect } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,6 +7,8 @@ function Products() {
   const navigate = useNavigate();
   const { products, loading, fetchProducts } = useProducts();
   const { user, isAuthenticated } = useAuth();
+  const [primaryImage, setPrimaryImage] = useState(null);
+  // const [othersImages, setOthersImages] = useState([]);
   const roles = user?.roles?.map(role => role.name);
 
   const handleProduct = (id) => {
@@ -15,6 +17,16 @@ function Products() {
   useEffect(() => {
     fetchProducts();
   }, []);
+  // useEffect(() => {
+  //   if (productDetails && productDetails.product_images) {
+  //     const primary = productDetails.product_images.find((image) => image.is_primary)?.image_url;
+  //     // const others = productDetails.product_images.filter((image) => !image.is_primary);
+  //     setPrimaryImage(primary);
+  //     // setOthersImages(others);
+  //     // console.log("othersImages", primaryImage);
+  //   }
+
+  // }, [productDetails])
   // console.log(products);
 
   return (
@@ -28,15 +40,20 @@ function Products() {
 
       <div className="grid lg:grid-cols-4  md:grid-cols-2 sm:grid-cols-1 gap-8 ">
         {products.map(product => (
+
           <div key={product.id}
             className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-5 text-center cursor-pointer"
             onClick={() => handleProduct(product.id)}>
-
-            <img
-              // src={`http://127.0.0.1:8000/storage/product_images/${product.product_images[0]}`}
-              src={`http://127.0.0.1:8000/storage/${product.product_images[0]?.image_url}`}
-              alt={product.name}
-              className="w-full h-48 object-cover rounded-xl mb-4" />
+            {product && product.product_images &&(
+              <img
+                // src={`http://127.0.0.1:8000/storage/${product.product_images.find((image) => image.is_primary)?.image_url}`}
+                src={
+                  product.product_images?.find((image) => image.is_primary)?.image_url ? `http://127.0.0.1:8000/storage/${product.product_images.find((image) => image.is_primary).image_url}` : '/images/PwithoutImage.jpg'
+                }
+                alt={product.name}
+                className="w-full h-48 object-cover rounded-xl mb-4" />  
+            )
+            }
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
               {product.name}</h3>
             <p className="text-gray-600 mb-4">${product.price}</p>
