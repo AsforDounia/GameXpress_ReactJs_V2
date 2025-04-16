@@ -19,8 +19,9 @@ import { CategoryProvider } from "./context/CategoryContext";
 import CategotiesList from "./pages/CategotiesList";
 import EditCategory from "./pages/EditCategory";
 import CategoryDetails from "./pages/CategoryDetails";
-import RésuméCommande from "./pages/RésuméCommande";
+
 import { CartProvider } from "./context/CartContext";
+import OrderSummary from "./pages/OrderSummary";
 
 
 function App() {
@@ -42,7 +43,7 @@ function App() {
                     </Route>
                     <Route path="unauthorized" element={<Unauthorized />} />
 
-                    <Route path="/resume-commande" element={<RésuméCommande />} />
+                    <Route path="/OrderSummary" element={<OrderSummary />} />
                     {/* Protected Routes */}
                       <Route path="products" element={<ProductList />} />
                       <Route path="productdetails/:id" element={<ProductDetails />} />
