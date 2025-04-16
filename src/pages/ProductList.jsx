@@ -14,15 +14,15 @@ const ProductList = () => {
   const isSuperAdmin = roles?.includes("super_admin");
   const isProductManager = roles?.includes("product_manager");
 
-  const [loading, setLoading] = useState(false); // Loader state
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // Start loading
+        setLoading(true); 
         await fetchProducts();
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false); 
       }
     };
 
