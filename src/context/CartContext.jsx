@@ -9,11 +9,11 @@ export const CartProvider = ({ children }) => {
 
     const getCart = async () => {
         try {
-          const response = await apiV2.get("categories");
+          const response = await apiV2.get("getCart");
           setCartDetails(response.data);
           console.log(response.data);
         } catch (error) {
-          console.error("Error fetching categories:", error);
+          console.error("Error fetching getCart:", error);
         }
       };
 
