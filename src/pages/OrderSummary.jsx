@@ -7,12 +7,13 @@ import { RiArrowLeftCircleLine , RiShoppingBag2Fill } from "react-icons/ri";
 const OrderSummary = () => {
   const { cartDetails, getCart } = useCart();
   
+  
   useEffect(() => {
     const fetchCart = async () => {
       await getCart();
     };
     fetchCart();
-  }, [getCart]);
+  }, []);
 
   if (!cartDetails || !cartDetails.items) {
     return (
