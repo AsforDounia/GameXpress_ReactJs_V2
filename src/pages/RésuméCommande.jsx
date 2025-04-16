@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { use, useEffect } from 'react';
+import { useCart } from '../context/CartContext';
 
 const RésuméCommande = () => {
+    const {cartDetails} = useCart();
+    useEffect(() => {
+        
+     })
+
   return (
     <div className="max-w-2xl mx-auto p-6 shadow-lg rounded-xl bg-white mt-8">
       <h2 className="text-2xl font-bold mb-6">Résumé de la commande</h2>

@@ -20,6 +20,7 @@ import CategotiesList from "./pages/CategotiesList";
 import EditCategory from "./pages/EditCategory";
 import CategoryDetails from "./pages/CategoryDetails";
 import RésuméCommande from "./pages/RésuméCommande";
+import { CartProvider } from "./context/CartContext";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <SubCategoryProvider>
             <DashboardProvider>
               <ProductProvider>
+                <CartProvider >
                 <Routes>
                   <Route path="/" element={<Layout />}>
                     {/* Public Routes */}
@@ -57,6 +59,7 @@ function App() {
                     <Route path="*" element={<div>404 - Page Not Found</div>} />
                   </Route>
                 </Routes>
+                </CartProvider>
               </ProductProvider>
             </DashboardProvider>
           </SubCategoryProvider>
