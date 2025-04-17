@@ -46,7 +46,7 @@ const Register = () => {
     
     const result = await register(userData);
     if (result.success) {
-      navigate('/');
+      mergeCart();
     } else {
       setError(result.message);
     }

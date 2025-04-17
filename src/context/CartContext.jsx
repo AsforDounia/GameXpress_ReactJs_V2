@@ -14,14 +14,16 @@ const getCart = async () => {
     let response;
     if (isAuthenticated) {
       response = await apiV2.get("getCart");
-      console.log("getCart (auth) : ", response.data);
+      // console.log("getCart (auth) : ", response.data);
+    setCartDetails(response.data);
+
     } else {
-      console.log("User is not authenticated. Fetching guest cart.");
-      response = await apiV2.get("getCart/Guest");
-      console.log("getCart (guest) : ", response.data);
+      const CartItems = localStorage.getItem("cartItems");
+      if (CartItems) {
+        setCartDetails(JSON.parse(CartItems));
+      }
     }
 
-    setCartDetails(response.data);
 
   } catch (error) {
     console.error("Error fetching getCart:", error);
@@ -55,16 +57,56 @@ const getCart = async () => {
         // });
       }
       else {
-        const response = await api.get("AddToCart/Guest/{product.id}");
-        console.log(response);
-      }
+
+        const cartData = localStorage.getItem('cartItems');
+        let cartItems = cartData ? JSON.parse(cartData) : [];
+      
+        const existingItemIndex = cartItems.findIndex(item => item.product_id === product.id);
+      
+        if (existingItemIndex !== -1) {
+
+          if (cartItems[existingItemIndex].quantity < product.stock) {
+            cartItems[existingItemIndex].quantity += 1;
+          } else {
+            alert("Not enough stock available");
+          }
+        } else {
+          const newItem = {
+            product_id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            stock: product.stock,
+            image: product.product_images.length > 0
+              ? product.product_images[0].url
+              : null
+          };
+      
+          cartItems.push(newItem);
+        }
+
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+  
     } catch (error) {
       console.error("Error Add to Cart:", error);
     }
   }
 
+
+  const mergeCart = async () => {
+    const cartItems = localStorage.getItem("cartItems");
+    if (cartItems) {
+      const items = JSON.parse(cartItems);
+      for (const item of items) {
+        await addToCart(item);
+      }
+      localStorage.removeItem("cartItems");
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ getCart, cartDetails, addToCart }}>
+    <CartContext.Provider value={{ getCart, cartDetails, addToCart , mergeCart }}>
       {children}
     </CartContext.Provider>
   );

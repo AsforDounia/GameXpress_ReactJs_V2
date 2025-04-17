@@ -5,8 +5,10 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { PiGameControllerFill } from "react-icons/pi";
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
+import { useCart } from '../context/CartContext';
 
 const Login = () => {
+  const {mergeCart} = useCart();
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
@@ -40,8 +42,7 @@ const Login = () => {
       const { data } = await api.get('/user');
 
       if (result.success) {
-        // navigate('/');
-
+        mergeCart();
       } else {
         setError(result.message);
       }
