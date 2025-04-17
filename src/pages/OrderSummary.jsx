@@ -2,18 +2,21 @@ import React, { useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 // import { ArrowLeft, ShoppingBag } from 'lucide-react';
 import { RiArrowLeftCircleLine , RiShoppingBag2Fill } from "react-icons/ri";
+import { useAuth } from '../context/AuthContext';
 
 
 const OrderSummary = () => {
   const { cartDetails, getCart } = useCart();
   
+  const {user} = useAuth();
   
   useEffect(() => {
     const fetchCart = async () => {
       await getCart();
     };
     fetchCart();
-  }, []);
+  }, [user]);
+
 
   if (!cartDetails || !cartDetails.items) {
     return (

@@ -6,37 +6,38 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
 
-  const [cartDetails, setCartDetails] = useState([]);
-  // const [panier, setPanier] = useState([]);
-  const { isAuthenticated } = useAuth();
-  const getCart = async () => {
-    try {
-      if (isAuthenticated) {
-        console.log("isAuthenticated ");
-        const response = await apiV2.get("getCart");
-        setCartDetails(response.data);
-      }
-      else {
-        console.log("User is not authenticated. Fetching guest cart.");
-        const response = await apiV2.get("getCart/Guest");
-        setCartDetails(response.data);
-        console.log(response.data);
-      }
-      console.log("getCart : ", response.data);
-    } catch (error) {
-      console.error("Error fetching getCart:", error);
+    const [cartDetails, setCartDetails] = useState([]);
+    const { isAuthenticated} = useAuth();
+
+const getCart = async () => {
+  try {
+    let response;
+    if (isAuthenticated) {
+      response = await apiV2.get("getCart");
+      console.log("getCart (auth) : ", response.data);
+    } else {
+      console.log("User is not authenticated. Fetching guest cart.");
+      response = await apiV2.get("getCart/Guest");
+      console.log("getCart (guest) : ", response.data);
     }
-  };
-  // const getCardGuest = async () => {
-  //   try {
-  //     const response = await apiV2.get("getCart/Guest");
-  //     setCartDetails(response.data);
-  //     console.log("getCardGuest : ",response.data);
-  //   }
-  //   catch (error) {
-  //     console.error("Error fetching getCardGuest:", error);
-  //   }
-  // };
+
+    setCartDetails(response.data);
+
+  } catch (error) {
+    console.error("Error fetching getCart:", error);
+  }
+};
+
+    // const getCardGuest = async () => {
+    //   try {
+    //     const response = await apiV2.get("getCart/Guest");
+    //     setCartDetails(response.data);
+    //     console.log("getCardGuest : ",response.data);
+    //   }
+    //   catch (error) {
+    //     console.error("Error fetching getCardGuest:", error);
+    //   }
+    // };
 
   const addToCart = async (product) => {
     try {
