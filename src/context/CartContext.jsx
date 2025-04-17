@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import api, { apiV2 } from '../api/axios';
+import { apiV1, apiV2 } from '../api/axios';
 import { useAuth } from './AuthContext';
 
 export const CartContext = createContext();
