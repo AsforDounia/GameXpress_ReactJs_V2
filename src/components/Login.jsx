@@ -34,8 +34,6 @@ function Login() {
             const result = res.data;
             localStorage.setItem("token", result.data.token);
             const token = result.data.token;
-            console.log(result);
-            console.log(token);
 
         } catch (error) {
             if (error.response) {
