@@ -39,8 +39,32 @@ const getCart = async () => {
     //   }
     // };
 
+  const addToCart = async (product) => {
+    try {
+      if (isAuthenticated) {
+        const response = await api.get("AddToCart/{product.id}");
+        console.log(response.cart);
+        // setPanier((prev) => {
+        //   const productExists = prev.find((prod) => prod.id === product.id);
+        //   if (productExists) {
+        //     return prev.map((prod) => prod.id === product.id ? { ...prod, quantite: prod.quantite + 1 } : prod);
+        //   }
+        //   else {
+        //     return [...prev, { ...product, quantite: 1 }];
+        //   }
+        // });
+      }
+      else {
+        const response = await api.get("AddToCart/Guest/{product.id}");
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error Add to Cart:", error);
+    }
+  }
+
   return (
-    <CartContext.Provider value={{ getCart , cartDetails }}>
+    <CartContext.Provider value={{ getCart, cartDetails, addToCart }}>
       {children}
     </CartContext.Provider>
   );
