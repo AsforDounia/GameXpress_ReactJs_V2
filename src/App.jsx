@@ -21,7 +21,10 @@ import EditCategory from "./pages/EditCategory";
 import CategoryDetails from "./pages/CategoryDetails";
 
 import { CartProvider } from "./context/CartContext";
+
 import OrderSummary from "./pages/OrderSummary";
+import PanierSidebar from "./pages/PanierSideBar";
+
 
 
 function App() {
@@ -42,8 +45,10 @@ function App() {
                       <Route path="register" element={<Register />} />
                     </Route>
                     <Route path="unauthorized" element={<Unauthorized />} />
+                    <Route path="/PanierSidebar" element={<PanierSidebar />} />
 
                     <Route path="/OrderSummary" element={<OrderSummary />} />
+
                     {/* Protected Routes */}
                       <Route path="products" element={<ProductList />} />
                       <Route path="productdetails/:id" element={<ProductDetails />} />
