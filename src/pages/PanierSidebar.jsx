@@ -12,7 +12,7 @@ const PanierSidebar= () => {
         }
         fetchData();
     },[user]);
-  // console.log(cartDetails.length);
+  console.log("ertyuiop : ",cartDetails);
 
     return (
         <div
@@ -26,44 +26,18 @@ const PanierSidebar= () => {
           </div>
     
           <div className="p-4 overflow-y-auto h-[calc(100%-160px)]">
-            {cartDetails && cartDetails.length === 0 ? (
+            {(cartDetails && (cartDetails.length === 0 || cartDetails.message) ) ? (
               <p className="text-gray-500 text-center mt-10">
                 Votre cartDetails est vide.
               </p>
-            ) 
-            : (
-              cartDetails.items.map((item) => (
-                <div key={item.id} className="flex justify-between items-center mb-4">
-                  <div>
-                    <p className="font-medium">{item.nom}</p>
-                    <p className="text-sm text-gray-600">
-                      {item.prix} € x {item.quantite}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQty(item.id, item.quantite - 1)}
-                      className="w-7 h-7 border rounded text-lg"
-                    >
-                      -
-                    </button>
-                    <span>{item.quantite}</span>
-                    <button
-                      onClick={() => updateQty(item.id, item.quantite + 1)}
-                      className="w-7 h-7 border rounded text-lg"
-                    >
-                      +
-                    </button>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-red-500 ml-2 text-sm"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
+            ) : (
+              (cartDetails.items.map((item) => 
+                <div>
+                  <p>{item.}</p>
                 </div>
-              ))
+              )
             )
+          )
             }
           </div>
     
