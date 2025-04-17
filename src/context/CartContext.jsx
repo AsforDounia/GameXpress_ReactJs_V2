@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { apiV1, apiV2 } from '../api/axios';
+import api, { apiV1, apiV2 } from '../api/axios';
 import { useAuth } from './AuthContext';
 
 export const CartContext = createContext();
@@ -94,6 +94,7 @@ const getCart = async () => {
   }
 
 
+
   const mergeCart = async () => {
     const cartItems = localStorage.getItem("cartItems");
     if (cartItems) {
@@ -105,8 +106,18 @@ const getCart = async () => {
     }
   };
 
+
+  const checkout = async () => {
+    try {
+      const response = await api.post("v3/checkout");
+      window.open(response.data.session.url, "_blank");
+    }
+    catch(error){
+      console.error("Error Checkout:", error);
+    }
+  }
   return (
-    <CartContext.Provider value={{ getCart, cartDetails, addToCart , mergeCart }}>
+    <CartContext.Provider value={{ getCart, cartDetails, addToCart , mergeCart , checkout}}>
       {children}
     </CartContext.Provider>
   );

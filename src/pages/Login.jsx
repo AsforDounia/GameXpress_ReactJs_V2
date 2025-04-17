@@ -42,7 +42,7 @@ const Login = () => {
       const { data } = await api.get('/user');
 
       if (result.success) {
-        mergeCart();
+        // mergeCart();
       } else {
         setError(result.message);
       }

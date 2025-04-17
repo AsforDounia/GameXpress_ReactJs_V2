@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 
 const OrderSummary = () => {
-  const { cartDetails, getCart } = useCart();
+  const { cartDetails, getCart , checkout} = useCart();
   
   const {user} = useAuth();
   
@@ -17,6 +17,15 @@ const OrderSummary = () => {
     fetchCart();
   }, [user]);
 
+  const handleCheckout = async () => {
+    console.log("Checkout clicked");
+    try {
+      const response = await checkout(); // appel de la fonction du contexte
+      console.log(response);
+    } catch (error) {
+      console.error("Error Checkout:", error);
+    }
+  };
 
   if (!cartDetails || !cartDetails.items) {
     return (
@@ -122,7 +131,7 @@ const OrderSummary = () => {
                 Continue Shopping
               </button>
 
-              <button className="w-1/2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+              <button onClick={handleCheckout} className="w-1/2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
                 <RiShoppingBag2Fill size={16} className="mr-2" />
                 Proceed to Checkout
               </button>
