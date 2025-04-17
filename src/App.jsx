@@ -35,7 +35,7 @@ function App() {
           <SubCategoryProvider>
             <DashboardProvider>
               <ProductProvider>
-                <CartProvider >
+                <CartProvider>
                 <Routes>
                   <Route path="/" element={<Layout />}>
                     {/* Public Routes */}

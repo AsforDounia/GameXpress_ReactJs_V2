@@ -5,10 +5,12 @@ import { FaTrash, FaEdit , FaCartPlus } from "react-icons/fa";
 
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useCart } from "../context/CartContext";
 
 const ProductList = () => {
   const navigate = useNavigate();
   const { fetchProducts, products, deleteProduct } = useProducts();
+  const {addToCart} = useCart();
   const { user } = useAuth();
   const roles = user?.roles?.map((role) => role.name);
   const isSuperAdmin = roles?.includes("super_admin");
@@ -43,6 +45,22 @@ const ProductList = () => {
     }
   };
 
+
+  const handleAddTocart = async (product) => {
+    setLoading(true);
+    try {
+      await addToCart(product);
+      
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // const handleAddTocart = (product) => {
+  //   console.log(product);
+  //   addToCart(product);
+  //   }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -70,17 +88,21 @@ const ProductList = () => {
             className="shadow-md rounded-2xl overflow-hidden border"
           >
             
-            <Link to={`/productdetails/${product.id}`}>
               <div className="flex justify-center items-center h-48 bg-gray-200 rounded-t-2xl overflow-hidden z-10 relative -top-8 -mb-8">
-                <img
-                  src={`http://127.0.0.1:8000/storage/${
-                    product.product_images.find((img) => img.is_primary)?.image_url
-                  }`}
-                  alt={product.name}
-                  className="h-48 w-full object-cover"
-                />
+                <Link to={`/productdetails/${product.id}`}>
+                    <img
+                      src={`http://127.0.0.1:8000/storage/${
+                        product.product_images.find((img) => img.is_primary)?.image_url
+                      }`}
+                      alt={product.name}
+                      className="h-48 w-full object-cover"
+                    />
+                </Link>
+
               </div>
               <div className="p-4">
+              <Link to={`/productdetails/${product.id}`}>
+
                 <h3 className="text-lg font-semibold">{product.name}</h3>
                 <p className="text-gray-500 text-sm">{product.subcategory?.name}</p>
                 <div className="flex items-center justify-between mt-3">
@@ -94,8 +116,10 @@ const ProductList = () => {
                   >
                     {product.status === "available" ? "In Stock" : "Out of Stock"}
                   </span>
+                
                 </div>
                 <p className="text-sm mt-1 text-gray-400">Stock: {product.stock}</p>
+              </Link>
                 {(isSuperAdmin || isProductManager) ? (
                   <div className="flex justify-between gap-2 mt-4 z-30">
                     <button
@@ -112,13 +136,12 @@ const ProductList = () => {
                     </button>
                   </div>
                 ) : (
-                  <button className="mt-3 flex justify-center items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full cursor-pointer">
+                  <button onClick={() => handleAddTocart(product)} className="mt-3 flex justify-center items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full cursor-pointer">
                     <FaCartPlus /> Add to Cart
                   </button>
                 )}
 
               </div>
-            </Link>
           </div>
         ))}
       </div>
