@@ -2,14 +2,24 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from './SideBar';
 import { FaCartArrowDown } from "react-icons/fa6";
+import React, { useState } from 'react';
+import PanierSidebar from '../pages/PanierSideBar';
+
 const Layout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const roles = user?.roles?.map(role => role.name);
   const location = useLocation();
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   const isProductsPage = location.pathname === '/products' || location.pathname === '/productdetails/:id';
+  const handleOpenSidebar = () => {
+    setIsSidebarOpen(true);
+  };
 
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
+  };
   return (
     <div className='bg-gray-50'>
       {!isAuthPage && (
@@ -49,10 +59,22 @@ const Layout = () => {
                   </Link>
                 </>
               )}
-                  <Link to="/PanierSideBar" className="hover:underline">
+              {/* <Link to="/PanierSideBar" className="hover:underline">
+                <FaCartArrowDown />
+              </Link> */}
+              <div>
+                <button
+                  onClick={handleOpenSidebar}
+                  className="p-2 bg-black text-white rounded"
+                >
                   <FaCartArrowDown />
-                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg> */}
-                  </Link>
+                </button>
+
+                <PanierSidebar
+                  isOpen={isSidebarOpen}
+                  onClose={handleCloseSidebar}
+                />
+              </div>
             </div>
           </div>
         </header>

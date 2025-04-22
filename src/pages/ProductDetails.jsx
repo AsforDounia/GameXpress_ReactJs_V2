@@ -4,9 +4,12 @@ import { useProducts } from "../context/ProductContext";
 import { FaCartPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { IoMdReturnLeft } from "react-icons/io";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext"
+import { toast } from "react-toastify";
 
 const ProductDetails = () => {
   const { user } = useAuth();
+  const { addToCart } = useCart();
   const roles = user?.roles?.map((role) => role.name);
   const isSuperAdmin = roles?.includes("super_admin");
   const isProductManager = roles?.includes("product_manager");
@@ -46,6 +49,11 @@ const ProductDetails = () => {
 
   }, [productDetails]);
 
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    toast.success("Product added to cart!");
+  }
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       setLoading(true); // Start loading
@@ -94,7 +102,9 @@ const ProductDetails = () => {
             </button>
           </div>
         ) : (
-          <button className="mt-3 flex justify-center items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer">
+          <button
+            onClick={() => handleAddToCart(productDetails)}
+            className="mt-3 flex justify-center items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer">
             <FaCartPlus /> Add to Cart
           </button>
         )}
@@ -121,8 +131,8 @@ const ProductDetails = () => {
         <p className="text-green-600 font-bold text-xl mb-4">${productDetails.price}</p>
         <span
           className={`inline-block px-3 py-1 mb-3 text-sm font-medium rounded-full ${productDetails.status === "available"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
             }`}
         >
           {productDetails.status === "available" ? "In Stock" : "Out of Stock"}
